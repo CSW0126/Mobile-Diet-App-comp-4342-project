@@ -1,0 +1,9 @@
+{
+    "env":{
+        "PORT":3000,
+        "MONGO_ATLAS_PW":"",
+        "JWT_KEY": "",
+        "ADMIN_NAME" : "comp4342",
+        "ADMIN_PASSWD" : "12345"
+    }
+}
