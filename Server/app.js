@@ -1,12 +1,23 @@
-const express = require('express')
-const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const express = require('express')
+const app = express()
 require('dotenv').config();
 
 //mongoDB
 // mongoose.connect('mongodb+srv://csw12345:'+ process.env.MONGO_ATLAS_PW +'@cluster0.sb1ol.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect("mongodb+srv://comp4342:" + process.env.MONGO_PW + "@cluster0.foul7vr.mongodb.net/?retryWrites=true&w=majority",
+    (error) => {
+        if (error == null) {
+            console.log("Server is connected");
+        }
+        else {
+            console.log(error)
+            console.log("Server could not be connected");
+        }
+    }
+);
 
 // Lib setup
 app.use(morgan('dev'))
@@ -25,9 +36,10 @@ app.use((req,res,next)=>{
 })
 
 // Routes
-const adminRoutes = require('./routes/admin')
-app.use('/admin', adminRoutes)
-
+const userRoutes = require('./routes/user')
+app.use('/user', userRoutes)
+const foodRoutes = require('./routes/foodRec')
+app.use('/foodRec', foodRoutes)
 
 // Error detect
 app.use((req,res,next)=>{
