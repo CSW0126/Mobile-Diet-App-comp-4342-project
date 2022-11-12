@@ -1,3 +1,6 @@
+//https://clarifai.com/clarifai/main/models/food-item-recognition?inputId=https%3A%2F%2Fs3.amazonaws.com%2Fsamples.clarifai.com%2Ffeatured-models%2Ffood-pepperoni-pizza.jpg
+// https://www.nutritionix.com/
+
 const https = require('https');
 const express = require('express');
 const router = express.Router();
