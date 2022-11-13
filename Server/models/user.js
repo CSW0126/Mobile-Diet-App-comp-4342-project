@@ -11,8 +11,10 @@ const UserSchema = mongoose.Schema({
     height: { type: Number, default: 0 },
     weight: { type: Number, default: 0 },
     age: {type: Number, default: 0},
-    // 1 = keep weight, 2 = increase weight, 3 = lose weight
-    plan: {type: Number, default: 1},
+    // "Keep" ,"Increase" , "Lose" 
+    purpose: {type: String, default: ""},
+    // 0 = 0.25, 1 = 0.5, 2 = 1  (i.e purpose + 0.25kg/week)
+    plan : {type: Number, default: 1},
     dietRecord: {type: [daymeal], default: []}
 })
 
