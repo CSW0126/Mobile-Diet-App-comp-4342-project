@@ -49,6 +49,19 @@ const upload = multer({
 
 router.post('/',upload.single('FoodImage'), (req, res, next) =>{
     console.log(req.file);
+    // console.log(req.file.path);
+    const imageUrl = req.file.path;
+
+    if (fs.existsSync(imageUrl)) {
+        const imageBytes = fs.readFileSync(imageUrl);
+        //call food Rec API
+        res.status(200).json({message:"finish"})
+
+    } else {
+        res.status(500).json({
+            message: 'upload fail'
+        })
+    }
 })
 
 //export
