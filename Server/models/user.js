@@ -15,7 +15,9 @@ const UserSchema = mongoose.Schema({
     purpose: {type: String, default: ""},
     // 0 = 0.25, 1 = 0.5, 2 = 1  (i.e purpose + 0.25kg/week)
     plan : {type: Number, default: 1},
-    dietRecord: {type: [daymeal], default: []}
+    dietRecord: {type: [daymeal], default: []},
+    // 0 = need to do tutorial, 1 = skip tutorial
+    tutPass: {type: Number, default: 0}
 })
 
 module.exports = mongoose.model('User', UserSchema)
