@@ -241,7 +241,7 @@ router.post('/edit',AuthToken, (req,res)=>{
                     message: 'Auth success',
                     status: 'success',
                     token: token,
-                    user: user
+                    user: updatedUser
                 })
 
             }).catch(err =>{
