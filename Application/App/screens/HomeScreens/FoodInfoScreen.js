@@ -6,6 +6,8 @@ import { COLORS } from '../../constants/Theme'
 import FoodHelper from '../../helper/FoodHelper'
 import UserHelper from '../../helper/UserHelper'
 import { GlobalVariables } from '../../constants/Index'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import EatRecordHelper from '../../helper/EatRecordHelper'
 
 export default function FoodInfoScreen({ route, navigation }) {
 
@@ -44,62 +46,63 @@ export default function FoodInfoScreen({ route, navigation }) {
     }
 
     const addSimpleFood = async (foodObject, quantity, enableGoBack) => {
-        let mealObject = GlobalVariables.mealObject
+        let eatRecord = GlobalVariables.TargetEatRecord
+        console.log(foodObject)
         //convert format
-        let food = FoodHelper.ConvertSimpleFoodJSONToDBFormat(foodObject, quantity)
-        //console.log("-----")
-        //console.log(food)
-        //if success
+        let food = FoodHelper.ConvertFoodJSONToDBFormat(foodObject, quantity)
+        // //console.log("-----")
+        // //console.log(food)
+        // //if success
         if (food) {
             let found = false;
             //search for same food in meal list
 
-            for (let i = 0; i < mealObject.food.length; i++) {
+            for (let i = 0; i < eatRecord.food.length; i++) {
                 //if found
-                if (mealObject.food[i]._id) {
-                    if (mealObject.food[i]._id == food._id) {
+                if (eatRecord.food[i]._id) {
+                    if (eatRecord.food[i]._id == food._id) {
                         //console.log("id")
-                        let q = mealObject.food[i].quantity + food.quantity
+                        let q = eatRecord.food[i].quantity + food.quantity
                         //max 100 
                         if (q > 100) {
                             q = 100
                         }
-                        mealObject.food[i].quantity = q
+                        eatRecord.food[i].quantity = q
                         found = true;
                         break
                     }
 
 
-                } else if (mealObject.food[i].name == food.name) {
+                } else if (eatRecord.food[i].name == food.name) {
                     //edit quantity
                     //console.log("name")
-                    let q = mealObject.food[i].quantity + food.quantity
+                    let q = eatRecord.food[i].quantity + food.quantity
                     //max 100 
                     if (q > 100) {
                         q = 100
                     }
-                    mealObject.food[i].quantity = q
+                    eatRecord.food[i].quantity = q
                     found = true;
                     break
                 }
             }
 
-
-
             //if not found, push
             if (!found) {
-                mealObject.food.push(food)
+                eatRecord.food.push(food)
             }
+
+            // console.log(GlobalVariables.loginUser.dietRecord)
 
             //update 
             try {
-                let resp = await UserHelper.AsyncEditUser(GlobalVariables.loginUser._id, GlobalVariables.loginUser)
+                let resp = await UserHelper.AsyncEditUser(await AsyncStorage.getItem("userToken"), GlobalVariables.loginUser)
                 if (resp.status == 'success') {
                     console.log('User edited')
                     //GlobalVariables.mealListCase = "FoodInfo"
                     GlobalVariables.loginUser = resp.user
-                    let daymeal = EatRecordHelper.getDayMealByDay(GlobalVariables.selectedDate)
-                    GlobalVariables.mealObject = EatRecordHelper.getMealBySlot(daymeal, GlobalVariables.selectedSlot)
+                    let eatRecord = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, GlobalVariables.selectedSlot)
+                    GlobalVariables.TargetEatRecord = eatRecord
                     //navigation.navigate("MealListScreen")
                     if (enableGoBack) {
                         navigation.goBack()

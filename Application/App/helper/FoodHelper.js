@@ -57,6 +57,33 @@ export const FoodHelper = {
             msg.message = 'Network Error'
             return msg;
         }
+    },
+    ConvertFoodJSONToDBFormat: (foodJSON, qty) => {
+        try {
+            //console.log(foodJSON._id)
+            let food = {
+                _id: (foodJSON._id ? foodJSON._id : null),
+                name: foodJSON.foodName,
+                imageUrl: foodJSON.photo,
+                unit: foodJSON.unit,
+                quantity: qty,
+                nutrition: {
+                    calories: foodJSON.calories,
+                    cholesterol: foodJSON.cholesterol,
+                    dietary_fiber: foodJSON.dietary_fiber,
+                    potassium: foodJSON.potassium,
+                    total_fat: foodJSON.total_fat,
+                    protein: foodJSON.protein,
+                    total_carbohydrate: foodJSON.total_carbohydrate,
+                    sugars: foodJSON.sugars,
+                    sodium: foodJSON.sodium,
+                    saturated_fat: foodJSON.saturated_fat
+                }
+            }
+            return food;
+        } catch (e) {
+            return null
+        }
     }
 }
 
