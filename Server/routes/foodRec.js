@@ -9,6 +9,7 @@ const fs = require("fs");
 var mime = require('mime-types')
 const { json } = require('body-parser');
 const { foodObject } = require('../models/food.js');
+const nutritionix   = require("nutritionix-api");
 
 router.post('/', (req, res, next) => {
     console.log(req.headers);
@@ -62,15 +63,18 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
             const clarifaiRsult  =  await foodRec(imageBytes)
             console.log("clarifaiRsult is ", clarifaiRsult)
             
-            if(clarifaiRsult == null){
+            if(clarifaiRsult.status != 'success'){
                 throw 'clarfai API error'
             }
 
-            const turnResult = await jsonToArrayToQuery(clarifaiRsult.turnResult)
-            console.log("what is this", turnResult)
+            const turnResult = await jsonToArrayToQuery(clarifaiRsult.result)
 
-            const respFromNutriDB = await doNutritionixDBRequest(turnResult)
+            if(turnResult.status != 'success'){
+                throw 'no data';
+            }
 
+            const respFromNutriDB = await doNutritionixDBRequest(turnResult.result)
+   
             console.log(respFromNutriDB)
 
         } else {
@@ -84,7 +88,92 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
 })
 
 
+function doNutritionixDBRequest(dbJSON){
+    console.log("/doNutritionixDBRequest", dbJSON);
 
+
+
+    return new Promise((resolve, reject)=>{
+        // nutritionix.init(process.env.NUTRITIONIX_APP_ID, process.env.NUTRITIONIX_APP_KEY);
+        // nutritionix.natural.search('Apple').then(result => {
+        //     console.log(result);
+        // });
+        
+        let data = "";
+        var postData = JSON.stringify(dbJSON);
+        console.log()
+        var options = {
+            host: 'trackapi.nutritionix.com',
+            path: '/v2/natural/nutrients',
+            port: 443,
+            method: 'POST',
+            headers: {
+                'x-app-id': process.env.NUTRITIONIX_APP_ID,
+                'x-app-key': process.env.NUTRITIONIX_APP_KEY,
+                'x-remote-user-id': process.env.NUTRITIONIX_APP_REMOTE_ID
+            }
+        };
+
+        console.log(options);
+
+        var req = https.request(options, (res) =>{
+            console.log("statusCode", res.statusCode);
+            console.log("headers", res.headers);
+
+            res.on('data', (d)=>{
+                data += d
+                console.log("data?", data)
+            })
+
+            res.on('end', ()=>{
+                let jsondata = JSON.parse(data);
+                console.log("jsondata", jsondata)
+
+            })
+        })
+
+        req.on('error', (e)=>{
+            console.error(e);
+
+            reject({
+                status: 'fail',
+                message: e
+            })
+        })
+
+        req.write(postData);
+        req.end();
+    })
+}
+
+function jsonToArrayToQuery(json){
+    return new Promise((resolve, reject) =>{
+        var result ="";
+        var queryJSON = [];
+        if(Object.keys(json).length!=0){
+            for(var i in json){
+                if(json[i].value >= 0.5){
+                    result += "1 " + json[i].name + " ";
+                }
+            }
+            queryJSON = {
+                query: result, 
+                locale: process.env.NUTRITIONIX_LOCALE
+            }
+            resolve({
+                status: 'success',
+                result: queryJSON
+            });
+        }else{
+            reject({
+                status: 'fail',
+                message: 'Empty JSON'
+            })
+        }
+    }
+
+    )
+}
 
 function foodRec(imageBytes, callback =()=>{} ){
     const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
@@ -127,7 +216,6 @@ function foodRec(imageBytes, callback =()=>{} ){
                 })
             }
     
-            
         );
         }catch(e){
             return reject({
