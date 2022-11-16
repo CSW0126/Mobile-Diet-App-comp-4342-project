@@ -116,7 +116,6 @@ export default function SignIn({ navigation }) {
         if (resp.status == 'success') {
             try {
                 loginUser = resp.user;
-                console.log("hihi")
                 console.log(resp.user)
                 //TODO suspend check
                 userToken = resp.token;

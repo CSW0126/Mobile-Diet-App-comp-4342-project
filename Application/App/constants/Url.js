@@ -20,7 +20,8 @@ export const UserUrl = {
 };
 export const FoodUrl = {
     //post 
-    foodRec: (HOST + '/foodRec/')
+    foodRec: (HOST + '/foodRec/'),
+    foodRecTest: (HOST + '/foodRec/foodRecTest/')
 
 }
 

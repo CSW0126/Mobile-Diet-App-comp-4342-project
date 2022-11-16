@@ -10,6 +10,7 @@ global.loginUser= {
     dietRecord:{},
     tutPass: 0
 }
+global.TargetEatRecord = ''
 
 // _id : mongoose.Schema.Types.ObjectId,
 // username : {type: String, require: true, unique: true},

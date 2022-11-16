@@ -3,38 +3,19 @@ import { StyleSheet, Text, View, FlatList, Image, LogBox } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { COLORS, FONTS, Images, SIZES } from '../constants/Index'
 import { Ionicons } from '@expo/vector-icons';
-import FoodHelper from '../Helper/FoodHelper';
+import FoodHelper from '../helper/FoodHelper';
 const PredictFoodList = (props) => {
 
-    const { navigation, foodList, complexFoodList } = props
+    const { navigation, foodList } = props
     const [displayList, setDisplayList] = useState([])
     LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     useEffect(() => {
 
         try {
-            let i, j;
+            let i;
             let tempList = []
-            let consoleList = []
-            //process the complex food list 
-            //TODO
-            //console.log("--------------------------")
-            //console.log(complexFoodList[0].name)
-            //console.log("----------------------")
-            //console.log(complexFoodList)
-            for (j = 0; j < complexFoodList.length; j++) {
-                if (complexFoodList[j].food.length != 0) {
-                    //console.log("----------------------")
-                    //console.log(complexFoodList[j])
-                    let f = FoodHelper.ConvertDBFormatToComplexFoodJSON(complexFoodList[j])
-                    //console.log(f)
-                    tempList.push(f)
-                    //consoleList.push(f)
-                }
-            }
-            //console.log(consoleList)
-            //console.log(tempList)
 
-            //process the simple food list
+            //process the food list
             for (i = 0; i < foodList.length; i++) {
                 if (foodList[i].calories) {
                     tempList.push(foodList[i])
@@ -53,19 +34,7 @@ const PredictFoodList = (props) => {
     const handlePress = (item) => {
         //console.log(item)
 
-        //if simple go food info
-        //if complex food , go comple food info
-
-        // if (item.food?.length > 0) {
-        //     console.log(item.food?.length)
-        //     navigation.navigate("FoodInfoScreen", { item, btnType: "Add" })
-        // } else {
         navigation.push("FoodInfoScreen", { item, btnType: "Add", planToFood: props.planToFood })
-        //}
-
-
-
-
 
     }
 

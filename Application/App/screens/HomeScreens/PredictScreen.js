@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ImageBackground, ActivityIndicator, TouchableOpacity, ScrollView, LogBox } from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, ActivityIndicator, TouchableOpacity,SafeAreaView, ScrollView, LogBox } from 'react-native'
 import * as Animatable from 'react-native-animatable';
 import { COLORS, FONTS, GlobalVariables, SIZES } from '../../constants/Index';
 import * as ImagePicker from 'expo-image-picker';
 import FoodHelper from '../../helper/FoodHelper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Platform } from 'react-native';
-// import PredictFoodList from '../../components/PredictFoodList'
+import PredictFoodList from '../../components/PredictFoodList';
 
 export default function PredictScreen({ route, navigation }) {
     const url  = route.params.url
     const [showIndicator, setShowIndicator] = useState(true)
     const [foodList, setFoodList] = useState(null)
-    const [complexFoodList, setComplexFoodList] = useState(null)
+
     LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     // console.log(GlobalVariables.selectedSlot)
     // console.log(GlobalVariables.selectedDate)
@@ -27,20 +27,18 @@ export default function PredictScreen({ route, navigation }) {
         })();
 
         //for testing 
-        //TestGetPredict()
+        TestGetPredict()
 
         //real
-        getPredict()
+        //getPredict()
     }, [])
 
     const TestGetPredict = async () => {
         try {
-            let resp = await FoodHelper.AsyncFoodRecTest()
+            let resp = await FoodHelper.AsyncFoodRecTest(url)
             if (resp.status == 'success') {
                 //console.log(resp)
                 setFoodList(resp.food)
-                setComplexFoodList(resp.foodFromCusModel)
-                //setComplexFoodList(textComplexFood)
                 setShowIndicator(false)
             }
         } catch (e) {
@@ -54,21 +52,13 @@ export default function PredictScreen({ route, navigation }) {
             if (resp.status == 'success') {
                 //console.log(resp)
                 setFoodList(resp.food)
-                setComplexFoodList(resp.foodFromCusModel)
                 console.log(resp)
                 console.log("-------------------------------------------------")
-                console.log(resp.foodFromCusModel)
                 setShowIndicator(false)
             }
         } catch (e) {
             console.log(e)
         }
-    }
-
-
-
-    const addManually = () => {
-        navigation.navigate('AddManually')
     }
 
     const showAddedList = () => {
@@ -94,9 +84,10 @@ export default function PredictScreen({ route, navigation }) {
     }
 
     const renderFooter = () => {
-        const planToFood = route.params.planToFood
         return (
-            <View>
+            <View 
+                // style={{flex:2, marginTop:SIZES.height * 0.34}}
+            >
                 <View
                     style={{ flexDirection: 'row' }}
                 >
@@ -109,17 +100,6 @@ export default function PredictScreen({ route, navigation }) {
                             style={[styles.btn, { flexDirection: 'row' }]}
                         >
                             <Text style={FONTS.body5}>Try again</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.shadow, { flex: 1, width: '90%', marginTop: 20 }]}
-                        onPress={addManually}
-                    >
-                        <LinearGradient
-                            colors={[COLORS.white, COLORS.white]}
-                            style={[styles.btn, { flexDirection: 'row' }]}
-                        >
-                            <Text style={FONTS.body5}>Add Manually</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -140,8 +120,6 @@ export default function PredictScreen({ route, navigation }) {
                 <PredictFoodList
                     navigation={navigation}
                     foodList={foodList}
-                    complexFoodList={complexFoodList}
-                    planToFood = {planToFood}
                 />
             </View>
         )
@@ -150,8 +128,9 @@ export default function PredictScreen({ route, navigation }) {
 
     return (
         <ScrollView
-            style={{ backgroundColor: "#ededed" }}
-            showsVerticalScrollIndicator={false}>
+            style={{ backgroundColor: "#ededed", flex:1 }}
+            showsVerticalScrollIndicator={false}
+            >
             <View style={{ flex: 1, paddingBottom: 10 }}>
                 {renderImg()}
                 {showIndicator ?

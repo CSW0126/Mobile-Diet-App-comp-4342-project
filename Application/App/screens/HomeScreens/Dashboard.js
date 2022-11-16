@@ -14,6 +14,7 @@ import moment from 'moment'
 import { COLORS, GlobalVariables, Images, ImgJson } from '../../constants/Index';
 import UserHelper from '../../helper/UserHelper';
 import EatRecordHelper from '../../helper/EatRecordHelper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 LocaleConfig.locales['en'] = {
     monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -141,12 +142,12 @@ export default function Home({ navigation }) {
     //---------------process or update bmr value
     const renderBMR = () => {
         try {
-            let dayMeal = EatRecordHelper.getDayMealByDay(selectedDay)
+            let dayMeal = EatRecordHelper.getEatRecordByDay(selectedDay)
             if (dayMeal != null) {
-                let breakfast = EatRecordHelper.getMealBySlot(dayMeal, 'breakfast')
-                let lunch = EatRecordHelper.getMealBySlot(dayMeal, 'lunch')
-                let dinner = EatRecordHelper.getMealBySlot(dayMeal, 'dinner')
-                let other = EatRecordHelper.getMealBySlot(dayMeal, 'other')
+                let breakfast = EatRecordHelper.getRecordByDaySlot(selectedDay, 'breakfast')
+                let lunch = EatRecordHelper.getRecordByDaySlot(selectedDay, 'lunch')
+                let dinner = EatRecordHelper.getRecordByDaySlot(selectedDay, 'dinner')
+                let other = EatRecordHelper.getRecordByDaySlot(selectedDay, 'other')
 
                 let bfCal = EatRecordHelper.getMealSlotCal(breakfast)
                 let luCal = EatRecordHelper.getMealSlotCal(lunch)
@@ -268,15 +269,15 @@ export default function Home({ navigation }) {
     const onCamPress = async (slot) => {
         //console.log(GlobalVariables.loginUser)
         console.log(slot + " onCamPress")
-        // let pass = await setMeal(slot)
+        let pass = await setMeal(slot)
 
-        // if (pass) {
+        if (pass) {
         //     // GlobalVariables.mealObject.name = slot
         //     // console.log(GlobalVariables.loginUser.personal.eatRecord)
             GlobalVariables.selectedSlot = slot
             GlobalVariables.selectedDate = selectedDay
             navigation.navigate("CameraScreen", { useGImgBase64: true })
-        // }
+        }
 
     }
 
@@ -293,42 +294,49 @@ export default function Home({ navigation }) {
 
     }
 
-    // const setMeal = async (slot) => {
-    //     let pass = false;
+    const setMeal = async (slot) => {
+        let pass = false;
 
-    //     let daymeal = EatRecordHelper.getDayMealByDay(selectedDay)
-    //     //if found, store to global
-    //     if (daymeal) {
-    //         GlobalVariables.mealObject = EatRecordHelper.getMealBySlot(daymeal, slot)
-    //         //if exists
-    //         if (GlobalVariables.mealObject) {
-    //             pass = true;
-    //         }
-    //     } else {
-    //         //create new daymeal
-    //         console.log("------------Dashboard-----------------")
-    //         console.log("No daymeal found in " + selectedDay)
-    //         daymeal = EatRecordHelper.createDayMeal(selectedDay)
-    //         try {
-    //             let resp = await UserHelper.AsyncEditUser(GlobalVariables.loginUser._id, GlobalVariables.loginUser)
-    //             if (resp.status == 'success') {
-    //                 GlobalVariables.loginUser = resp.user
-    //                 let daymeal = EatRecordHelper.getDayMealByDay(selectedDay)
-    //                 GlobalVariables.mealObject = EatRecordHelper.getMealBySlot(daymeal, slot)
-    //                 //if exists
-    //                 if (GlobalVariables.mealObject) {
-    //                     pass = true
-    //                 }
-    //             } else {
-    //                 throw resp.message
-    //             }
-    //         } catch (e) {
-    //             console.log(e)
-    //         }
-    //     }
+        let eatRecord = EatRecordHelper.getRecordByDaySlot(selectedDay, slot)
+        console.log("eatRecord")
+        console.log(eatRecord)
+        //if found, store to global
+        if (eatRecord) {
+            GlobalVariables.TargetEatRecord = eatRecord
+            pass = true
+        } else {
+            //create new record_obj
+            console.log("------------Dashboard-----------------")
+            console.log("No record_obj found in " + selectedDay)
+            let record_obj = EatRecordHelper.createEatRecordByDateSlot(selectedDay, slot)
+            try {
+                console.log("before update")
+                console.log(GlobalVariables.loginUser)
+                let resp = await UserHelper.AsyncEditUser(await AsyncStorage.getItem("userToken"), GlobalVariables.loginUser)
+                if (resp.status == 'success') {
+                    GlobalVariables.loginUser = resp.user
+                    record_obj = EatRecordHelper.getRecordByDaySlot(selectedDay, slot)
+                    if (record_obj){
+                        GlobalVariables.TargetEatRecord = record_obj
+                        console.log("after")
+                        console.log(GlobalVariables.loginUser )
+                    }else{
+                        console.log("record_obj update error !")
+                    }
+                    //if exists
+                    if (GlobalVariables.TargetEatRecord) {
+                        pass = true
+                    }
+                } else {
+                    throw resp.message
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
 
-    //     return pass;
-    // }
+        return pass;
+    }
     //---------------end card button press
 
     return (
