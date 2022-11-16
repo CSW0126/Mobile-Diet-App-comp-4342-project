@@ -110,7 +110,7 @@ router.post('/login', (req, res) =>{
                                 expiresIn: "10d"
                             })
                 return res.status(200).json({
-                    user : result,
+                    user : user,
                     message: 'Auth success',
                     token: token,
                     status: "success"
