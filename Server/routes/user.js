@@ -101,7 +101,7 @@ router.post('/login', (req, res) =>{
                     message: "Auth fail"
                 })
             }
-            result.password = undefined
+            user.password = undefined
             if (result){
                 const token = jwt.sign({
                                 username : user.username,
