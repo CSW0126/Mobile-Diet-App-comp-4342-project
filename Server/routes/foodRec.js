@@ -86,47 +86,56 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
 
 
 
-function foodRec(imageBytes ){
+function foodRec(imageBytes, callback =()=>{} ){
     const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
     const stub = ClarifaiStub.grpc();
     const metadata = new grpc.Metadata();
     metadata.set("authorization", "Key " +  process.env.FOOD_REC_API_KEY);
     var jsonArr = [];
 
-    stub.PostModelOutputs(
-        {
-            // This is the model ID of a publicly available General model. You may use any other public or custom model ID.
-            model_id: process.env.FOOD_REC_MODEL_ID,
-            inputs: [{data: {image: {base64 : imageBytes}}}]
-        },
-        metadata,
-        (err, response) => {
-            if (err) {
-                console.log("Error: " + err);
-                return;
-            }
+    return new Promise((resolve, reject) =>{
+        try{
+        stub.PostModelOutputs(
+            {
+                // This is the model ID of a publicly available General model. You may use any other public or custom model ID.
+                model_id: process.env.FOOD_REC_MODEL_ID,
+                inputs: [{data: {image: {base64 : imageBytes}}}]
+            },
+            metadata,
+            (err, response) => {
+                if (err) {
+                    console.log("Error: " + err);
+                    return;
+                }
 
-            if (response.status.code !== 10000) {
-                console.log("Received failed status: " + response.status.description + "\n" + response.status.details);
-                return;
-            }
+                if (response.status.code !== 10000) {
+                    console.log("Received failed status: " + response.status.description + "\n" + response.status.details);
+                    return;
+                }
 
-            console.log("Predicted concepts, with confidence values:")
-            for (const c of response.outputs[0].data.concepts) {
-                jsonArr.push({
-                    name: c.name,
-                    value: c.value
+                console.log("Predicted concepts, with confidence values:")
+                for (const c of response.outputs[0].data.concepts) {
+                    jsonArr.push({
+                        name: c.name,
+                        value: c.value
+                    })
+                }
+             
+                resolve({
+                    status: 'success',
+                    result: jsonArr
                 })
             }
-            console.log("here we go ", jsonArr)
+    
             
-            if (typeof callback === 'function') {
-                return callback(jsonArr);
-              }
+        );
+        }catch(e){
+            return reject({
+                status: 'fail',
+                message: e
+            })
         }
-        
-    );
-
+    })
 }
 //export
 module.exports = router;
