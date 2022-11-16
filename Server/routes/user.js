@@ -186,7 +186,20 @@ router.post('/verify',AuthToken, (req,res)=>{
     }
 })
 
-
+/* edit
+URL:localhost:3000/user/login
+Method: POST
+body:
+{
+    "user": "{
+        _id : xxxxxxxxxxxxx
+        username: xxx
+        xxx: xxx
+        ...
+    },
+    "token": xxxxxxxxx
+}
+*/
 router.post('/edit',AuthToken, (req,res)=>{
     try{
         console.log(req.body)
