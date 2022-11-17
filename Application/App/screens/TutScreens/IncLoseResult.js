@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Text,
     Platform,
+    ScrollView,
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Animatable from 'react-native-animatable';
@@ -71,76 +72,81 @@ export default function IncLoseResult({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor={COLORS.quaternary} barStyle="light-content" />
-            <Animatable.View
-                animation="fadeInUpBig"
-                style={styles.header}
-            >
-                <LottieView source={ImgJson.chart2} autoPlay loop />
-            </Animatable.View>
-            <Animatable.View
-                animation="fadeInDownBig"
-                style={styles.footer}>
-                <Text style={styles.text_header}>Recommendation</Text>
-                <Text style={styles.text_2}>Select the target plan</Text>
-                <View>
-                    <Picker
-                        selectedValue={rate.targetRateLabel}
-                        style={styles.pickerContainer}
-                        onValueChange={(itemValue, itemIndex) => handleChange(itemValue, itemIndex)}>
-                        <Picker.Item label="0.25 Kg / Week" value="0.25 Kg / Week" />
-                        <Picker.Item label="0.5 Kg / Week" value="0.5 Kg / Week" />
-                        <Picker.Item label="1 Kg / Week" value="1 Kg / Week" />
-                    </Picker>
-                </View>
-                <Text style={styles.text_2}>In order to
-                    <Text style={{ fontWeight: 'bold' }}> {GlobalVariables.loginUser.purpose} </Text>weight with
-                    <Text style={{ fontWeight: 'bold' }}> {rate.targetRateLabel} </Text>, You should absorb
-                </Text>
+        <ScrollView 
+            contentContainerStyle={{
+                flex: 1
+            }}>
+            <View style={styles.container}>
+                <StatusBar backgroundColor={COLORS.quaternary} barStyle="light-content" />
+                <Animatable.View
+                    animation="fadeInUpBig"
+                    style={styles.header}
+                >
+                    <LottieView source={ImgJson.chart2} autoPlay loop />
+                </Animatable.View>
+                <Animatable.View
+                    animation="fadeInDownBig"
+                    style={styles.footer}>
+                    <Text style={styles.text_header}>Recommendation</Text>
+                    <Text style={styles.text_2}>Select the target plan</Text>
+                    <View>
+                        <Picker
+                            selectedValue={rate.targetRateLabel}
+                            style={styles.pickerContainer}
+                            onValueChange={(itemValue, itemIndex) => handleChange(itemValue, itemIndex)}>
+                            <Picker.Item label="0.25 Kg / Week" value="0.25 Kg / Week" />
+                            <Picker.Item label="0.5 Kg / Week" value="0.5 Kg / Week" />
+                            <Picker.Item label="1 Kg / Week" value="1 Kg / Week" />
+                        </Picker>
+                    </View>
+                    <Text style={styles.text_2}>In order to
+                        <Text style={{ fontWeight: 'bold' }}> {GlobalVariables.loginUser.purpose} </Text>weight with
+                        <Text style={{ fontWeight: 'bold' }}> {rate.targetRateLabel} </Text>, You should absorb
+                    </Text>
 
-                <View>
-                    <AnimatedCircularProgress
-                        ref={chartRef}
-                        style={styles.progess}
-                        size={Platform.OS === 'ios' ? 200 : 150}
-                        width={15}
-                        fill={100}
-                        tintColor={COLORS.quaternary}
-                        duration={1500}
-                        backgroundColor={COLORS.darkgray}
-                        arcSweepAngle={240}
-                        rotation={240}
-                        lineCap="round"
-                    >
-                        {
-                            (fill) => (
-                                <Text style={styles.text_3}>
-                                    {(fill / 100 * rate.bmr).toFixed(2)} Kcal/Day
-                                </Text>
-                            )
-                        }
-
-                    </AnimatedCircularProgress>
-                </View>
-
-
-                <View style={styles.button}>
-                    <TouchableOpacity
-                        style={styles.btnNext}
-                        onPress={onFinishPress}
-                        disabled={isButtonDisable}
-                    >
-                        <LinearGradient
-                            colors={[COLORS.primary2, COLORS.quaternary]}
-                            style={styles.btnNext}
+                    <View>
+                        <AnimatedCircularProgress
+                            ref={chartRef}
+                            style={styles.progess}
+                            size={Platform.OS === 'ios' ? 200 : 150}
+                            width={15}
+                            fill={100}
+                            tintColor={COLORS.quaternary}
+                            duration={1500}
+                            backgroundColor={COLORS.darkgray}
+                            arcSweepAngle={240}
+                            rotation={240}
+                            lineCap="round"
                         >
-                            <Text style={[styles.btnText]}>Finish</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
-            </Animatable.View>
-        </View>
+                            {
+                                (fill) => (
+                                    <Text style={styles.text_3}>
+                                        {(fill / 100 * rate.bmr).toFixed(2)} Kcal/Day
+                                    </Text>
+                                )
+                            }
+
+                        </AnimatedCircularProgress>
+                    </View>
+
+
+                    <View style={styles.button}>
+                        <TouchableOpacity
+                            style={styles.btnNext}
+                            onPress={onFinishPress}
+                            disabled={isButtonDisable}
+                        >
+                            <LinearGradient
+                                colors={[COLORS.primary2, COLORS.quaternary]}
+                                style={styles.btnNext}
+                            >
+                                <Text style={[styles.btnText]}>Finish</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                </Animatable.View>
+            </View>
+        </ScrollView>
     )
 }
 
