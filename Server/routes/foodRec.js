@@ -58,8 +58,11 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
             //call food Rec API
 
             const clarifaiRsult  =  await foodRec(imageBytes)
-            // console.log("clarifaiRsult is ", clarifaiRsult)
-            
+    
+            // clarifaiRsult.result[0].name = "apple"
+            // clarifaiRsult.result[4].name = "abc"
+            // clarifaiRsult.result[8].name = "sweet"
+            console.log("clarifaiRsult is ", clarifaiRsult)
             if(clarifaiRsult.status != 'success'){
                 throw 'clarfai API error'
             }
@@ -95,7 +98,6 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
 function doNutritionixDBRequest(dbJSON){
     return new Promise((resolve, reject)=>{
         let data = "";
-        dbJSON.query = "1 lettuce 1 abc 1 tomato 1 garlic 1 radish 1 salad 1 cabbage 1 onion 1 happy 1 berry 1 asparagus 1 cherry tomato 1 lemon 1 mushroom 1 carrot 1 eggplant 1 broccoli 1 antipasto 1 sweet 1 romaine ";
         var postData = JSON.stringify(dbJSON);
 
 
@@ -181,11 +183,11 @@ function jsonToArrayToQuery(json){
 }
 
 function reformatJSON( clarifaiResult, jsonNutriDBResult){
-    console.log("/reformatJSON")
     return new Promise((resolve, reject) =>{
         var outputJson = [];
         var NutriDBResult = jsonNutriDBResult.foods
         var count = 0;
+        console.log("List", NutriDBResult[0])
         if(clarifaiResult != null && NutriDBResult != null){
             for(var i in clarifaiResult){
                 var j = i-count;
@@ -194,7 +196,7 @@ function reformatJSON( clarifaiResult, jsonNutriDBResult){
                     "foodName" : clarifaiResult[i].name,
                     "value" : clarifaiResult[i].value,
                 }
-           
+                // console.log("/looping", clarifaiResult[i].name, "  ", NutriDBResult[j].food_name)
                 if(clarifaiResult[i].name != NutriDBResult[j].food_name){
                     count ++;    
                 }else{
@@ -216,7 +218,6 @@ function reformatJSON( clarifaiResult, jsonNutriDBResult){
                         "photo" : NutriDBResult[j].photo.thumb
                     }
                 }
-                console.log("/outputJson", outputJson)
 
             }          
             
