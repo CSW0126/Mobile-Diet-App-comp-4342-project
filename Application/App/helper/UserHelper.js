@@ -204,6 +204,51 @@ export const UserHelper = {
             msg.message = 'Network Error'
             return msg;
         }
+    },
+    getTypeString: () => {
+        let type = ""
+        let str = ""
+        try {
+            let targetType = GlobalVariables.loginUser.plan
+            let purpose = GlobalVariables.loginUser.purpose
+
+            if (purpose == 'Keep') {
+                return;
+            }
+
+            switch (targetType) {
+                case 0:
+                    str = ' 0.25 Kg / Week'
+                    break;
+                case 1:
+                    str = ' 0.5 Kg / Week'
+                    break;
+                case 2:
+                    str = ' 1 Kg / Week'
+                    break;
+            }
+
+            if (purpose == 'Increase') {
+                type = 'Increase' + str
+            } else {
+                type = 'Lose' + str
+            }
+        } catch (e) {
+            console.log(e)
+        }
+        return type
+    },
+    UpdateReference: (user) =>{
+        try {
+
+            if (user) {
+                GlobalVariables.loginUser = user
+                console.log("Update user Reference Success")
+            }
+        } catch (e) {
+            console.log(e)
+            //console.log("Update Reference Fail")
+        }
     }
 }
 const processBmrWithRate = (bmr) => {

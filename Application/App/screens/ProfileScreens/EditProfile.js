@@ -27,8 +27,6 @@ import Modal, {
 } from 'react-native-modals';
 import { LinearGradient } from 'expo-linear-gradient';
 import UserHelper from '../../helper/UserHelper';
-import moment from 'moment'
-import { Buffer } from 'buffer'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -42,7 +40,8 @@ export default function EditProfile({ navigation }) {
         weightError: false,
         heightState: false,
         heightError: false,
-        ageState: false
+        ageState: false,
+        ageError: false
     })
 
 
@@ -52,7 +51,8 @@ export default function EditProfile({ navigation }) {
 
     const [tempData, setTempData] = useState({
         height: loginUser.height,
-        weight: loginUser.weight
+        weight: loginUser.weight,
+        age : loginUser.age
 
     })
 
@@ -140,7 +140,7 @@ export default function EditProfile({ navigation }) {
     }
     //end height handler
 
-    //Weight handler
+    // weight  handler
     const handleWeightChange = (val) => {
         const numericRegex = /\d+\.?\d*/
         if (numericRegex.test(val)) {
@@ -202,7 +202,69 @@ export default function EditProfile({ navigation }) {
             })
         }
     }
-    //end height handler
+
+    const handleAgeChange = (val) => {
+        const numericRegex = /\d+\.?\d*/
+        if (numericRegex.test(val)) {
+            if (val < 1 || val > 150) {
+                setModalState({
+                    ...modalState,
+                    ageError: true
+                })
+                setTempData({
+                    ...tempData,
+                    age: loginUser.age
+                })
+            } else {
+                setModalState({
+                    ...modalState,
+                    ageError: false,
+                })
+                setTempData({
+                    ...tempData,
+                    age: val
+                })
+            }
+        } else {
+            setModalState({
+                ...modalState,
+                ageError: true
+            })
+            setTempData({
+                ...tempData,
+                age: loginUser.age
+            })
+        }
+    }
+
+    const handleAgeSave = async () => {
+        if (!modalState.ageError && tempData.age >= 1 && tempData.age <= 150) {
+            loginUser.age = tempData.age
+            try {
+                let resp = await UserHelper.AsyncEditUser(await AsyncStorage.getItem("userToken"), loginUser)
+                if (resp.status == 'success') {
+                    console.log("Age change to  " + resp.user.age)
+                    UserHelper.UpdateReference(resp.user)
+                }
+            } catch (e) {
+                console.log(e)
+            }
+            setModalState({
+                ...modalState,
+                ageState: false
+            })
+        } else {
+            setModalState({
+                ...modalState,
+                ageError: true,
+            })
+            setTempData({
+                ...tempData,
+                age: loginUser.age
+            })
+        }
+    }
+    //end height weight age handler
 
     //purpose handler
     const handlePurposeChange = async (val) => {
@@ -217,14 +279,14 @@ export default function EditProfile({ navigation }) {
             case 'Increase':
                 passChecking = true;
                 loginUser.purpose = val
-                loginUser.plan = "1"
+                loginUser.plan = 0
                 setTypeStr(UserHelper.getTypeString())
                 setShowType(true)
                 break;
             case 'Lose':
                 passChecking = true;
                 loginUser.purpose = val
-                loginUser.plan = "1"
+                loginUser.plan = 0
                 setTypeStr(UserHelper.getTypeString())
                 setShowType(true)
                 break;
@@ -237,6 +299,9 @@ export default function EditProfile({ navigation }) {
                     console.log("purpose change to " + resp.user.purpose)
                     console.log("diet type change to " + resp.user.plan)
                     UserHelper.UpdateReference(resp.user)
+                    if(resp.user.purpose != "Keep"){
+                        setTypeStr(UserHelper.getTypeString())
+                    }
                 }
             } catch (e) {
                 console.log(e)
@@ -252,14 +317,14 @@ export default function EditProfile({ navigation }) {
 
     //handle type change
     const handleTypeChange = async (val) => {
-        if (val == "1" || val == "2" || val == "3") {
-            loginUser.targetRateType = val
-            setTypeStr(UserHelper.getTypeString())
+        if (val == 0 || val == 1 || val == 2) {
+            loginUser.plan = val
             try {
                 let resp = await UserHelper.AsyncEditUser(await AsyncStorage.getItem("userToken"), loginUser)
                 if (resp.status == 'success') {
                     console.log("diet type change to " + resp.user.plan)
                     UserHelper.UpdateReference(resp.user)
+                    setTypeStr(UserHelper.getTypeString())
                 }
             } catch (e) {
                 console.log(e)
@@ -429,6 +494,7 @@ export default function EditProfile({ navigation }) {
                     <Text style={{ fontSize: 18, flex: 1 }}>Weight</Text>
                     <Text style={{ fontSize: 18, flex: 1, textAlign: 'right', color: COLORS.darkgray }}>{loginUser.weight} kg</Text>
                 </TouchableOpacity>
+
                 <Modal
                     visible={modalState.weightState}
                     onTouchOutside={() => {
@@ -471,6 +537,75 @@ export default function EditProfile({ navigation }) {
                             <TouchableOpacity
                                 style={{ flex: 1, width: '90%', marginTop: 20 }}
                                 onPress={handleWeightSave}
+                            >
+                                <LinearGradient
+                                    colors={['#35cfe0', "#00BBF2"]}
+                                    style={styles.btn}
+                                >
+                                    <Text>Save</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
+                    </ModalContent>
+
+                </Modal>
+
+                {/* age */}
+                <TouchableOpacity style={styles.action}
+                    onPress={() => {
+                        setModalState({
+                            ...modalState,
+                            ageState: true
+                        })
+                    }}
+                >
+
+                    <FontAwesome5 name="weight" size={24} color="black" style={{ flex: 0.2 }} />
+                    <Text style={{ fontSize: 18, flex: 1 }}>Age</Text>
+                    <Text style={{ fontSize: 18, flex: 1, textAlign: 'right', color: COLORS.darkgray }}>{loginUser.age}</Text>
+                </TouchableOpacity>
+                <Modal
+                    visible={modalState.ageState}
+                    onTouchOutside={() => {
+                        setModalState({
+                            ...modalState,
+                            ageState: false
+                        });
+                    }}
+                    modalAnimation={new SlideAnimation({
+                        slideFrom: 'bottom',
+                    })}
+                >
+
+                    <ModalContent style={{ height: 200, width: 300 }}>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={[FONTS.h3, { flex: 1 }]}>Age</Text>
+                            <TextInput
+                                placeholder="e.g. 1-150"
+                                placeholderTextColor="#666666"
+                                autoCorrect={false}
+                                autoCapitalize='none'
+                                onChangeText={(val) => handleAgeChange(val)}
+                                keyboardType={'numeric'}
+                                style={[
+                                    styles.textInput,
+                                    {
+                                        color: COLORS.black,
+                                        width: '100%',
+                                        borderBottomColor: COLORS.darkgray,
+                                        borderBottomWidth: 1
+                                    },
+                                ]}
+                            />
+                            {modalState.ageError ?
+                                <Animatable.View animation="fadeInLeft" duration={500}>
+                                    <Text style={{ color: COLORS.red, fontSize: 10, marginTop: 10 }}>Should be in range 1 - 150</Text>
+                                </Animatable.View>
+                                : null}
+
+                            <TouchableOpacity
+                                style={{ flex: 1, width: '90%', marginTop: 20 }}
+                                onPress={handleAgeSave}
                             >
                                 <LinearGradient
                                     colors={['#35cfe0', "#00BBF2"]}
@@ -585,7 +720,7 @@ export default function EditProfile({ navigation }) {
                             <Text style={[FONTS.h3, { flex: 1 }]}>Diet Type</Text>
                             <TouchableOpacity
                                 style={{ flex: 1, width: '90%', marginTop: 20 }}
-                                onPress={() => handleTypeChange("1")}
+                                onPress={() => handleTypeChange(0)}
                             >
                                 <LinearGradient
                                     colors={[COLORS.primary2, COLORS.primary]}
@@ -597,7 +732,7 @@ export default function EditProfile({ navigation }) {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={{ flex: 1, width: '90%', marginTop: 20 }}
-                                onPress={() => handleTypeChange("2")}
+                                onPress={() => handleTypeChange(1)}
                             >
                                 <LinearGradient
                                     colors={[COLORS.secondary, COLORS.blue]}
@@ -609,7 +744,7 @@ export default function EditProfile({ navigation }) {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={{ flex: 1, width: '90%', marginTop: 20 }}
-                                onPress={() => handleTypeChange("3")}
+                                onPress={() => handleTypeChange(2)}
                             >
                                 <LinearGradient
                                     colors={[COLORS.tertuary2, COLORS.tertiary]}
