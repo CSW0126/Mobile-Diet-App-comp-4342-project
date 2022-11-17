@@ -53,7 +53,6 @@ export const EatRecordHelper = {
             if (slotMeal.food.length == 0) {
                 return 0
             }
-            console.log("hi")
             //get cal from simple food list
             for (let i = 0; i < slotMeal.food.length; i++) {
                 cal += slotMeal.food[i].nutrition['calories'] * slotMeal.food[i].quantity

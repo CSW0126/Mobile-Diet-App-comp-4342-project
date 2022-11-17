@@ -45,6 +45,7 @@ export default function Home({ navigation }) {
         totalFill: 100,
         eatenFill: 0,
     })
+    console.log(selectedDay)
 
     const BudgetRef = useRef();
     const EatenRef = useRef();
@@ -62,15 +63,7 @@ export default function Home({ navigation }) {
             useNativeDriver: false
         }).start();
 
-        //handleGlobalPlan()
-
-        // console.log("BMR: " + UserHelper.CalBmr())
-        // console.log("Bf: " + UserHelper.getBreakfastRecomCal())
-        // console.log("LUN: " + UserHelper.getLunchRecomCal())
-        // console.log("DIN: " + UserHelper.getDinnerRecomCal())
-        // console.log("OTH: " + UserHelper.getOtherRecomCal())
-        // console.log("AGE: " + UserHelper.getAge())
-        // console.log("SELDAY: " + selectedDay)
+        GlobalVariables.selectedDate = selectedDay
     }, [])
 
     useEffect(() => {
@@ -113,7 +106,7 @@ export default function Home({ navigation }) {
     }
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
-        let resp = await UserHelper.AsyncUserToken(GlobalVariables.loginUser._id);
+        let resp = await UserHelper.AsyncUserToken(await AsyncStorage.getItem("userToken"));
         if (resp.status == 'success') {
             GlobalVariables.loginUser = resp.user
             console.log("refresh user success")
@@ -142,12 +135,12 @@ export default function Home({ navigation }) {
     //---------------process or update bmr value
     const renderBMR = () => {
         try {
-            let dayMeal = EatRecordHelper.getEatRecordByDay(selectedDay)
+            let dayMeal = EatRecordHelper.getEatRecordByDay(GlobalVariables.selectedDate)
             if (dayMeal != null) {
-                let breakfast = EatRecordHelper.getRecordByDaySlot(selectedDay, 'breakfast')
-                let lunch = EatRecordHelper.getRecordByDaySlot(selectedDay, 'lunch')
-                let dinner = EatRecordHelper.getRecordByDaySlot(selectedDay, 'dinner')
-                let other = EatRecordHelper.getRecordByDaySlot(selectedDay, 'other')
+                let breakfast = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'breakfast')
+                let lunch = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'lunch')
+                let dinner = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'dinner')
+                let other = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'other')
 
                 let bfCal = EatRecordHelper.getMealSlotCal(breakfast)
                 let luCal = EatRecordHelper.getMealSlotCal(lunch)
@@ -160,6 +153,7 @@ export default function Home({ navigation }) {
                 // let otCal = 0
                 console.log("----------HOME----------")
                 console.log("Breakfast, lunch, dinner, other")
+                console.log(selectedDay)
                 console.log(bfCal, "   ", luCal, "   ", diCal, "      ", otCal)
 
 
@@ -239,6 +233,7 @@ export default function Home({ navigation }) {
     // < press
     const handlePrevDayPress = () => {
         let prevDay = moment(selectedDay).subtract(1, 'day').format("YYYY-MM-DD")
+        GlobalVariables.selectedDate = prevDay
         setSelectedDay(prevDay);
     }
 
@@ -250,6 +245,7 @@ export default function Home({ navigation }) {
     // > press
     const handleNextDayPress = () => {
         let nextDay = moment(selectedDay).add(1, 'day').format("YYYY-MM-DD")
+        GlobalVariables.selectedDate = nextDay
         setSelectedDay(nextDay)
 
     }
@@ -257,6 +253,7 @@ export default function Home({ navigation }) {
     //day in calerdar press
     const handleDayPress = (day) => {
         let selDay = moment(day.dateString).format("YYYY-MM-DD")
+        GlobalVariables.selectedDate = selDay
         setSelectedDay(selDay)
         //setShow(false);
 
