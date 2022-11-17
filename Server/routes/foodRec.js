@@ -8,8 +8,6 @@ const multer = require('multer');
 const fs = require("fs");
 var mime = require('mime-types')
 const { json } = require('body-parser');
-const { foodObject } = require('../models/food.js');
-const nutritionix   = require("nutritionix-api");
 
 router.post('/', (req, res, next) => {
     console.log(req.headers);
@@ -74,8 +72,10 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
             }
 
             const respFromNutriDB = await doNutritionixDBRequest(turnResult.result)
-   
-            console.log(respFromNutriDB)
+            console.log("what is respFromNutriDB", respFromNutriDB.result)
+
+            // let outputJson = reformatJSON(clarifaiRsult.result, respFromNutriDB.result)
+            
 
         } else {
             res.status(500).json({
@@ -94,11 +94,6 @@ function doNutritionixDBRequest(dbJSON){
 
 
     return new Promise((resolve, reject)=>{
-        // nutritionix.init(process.env.NUTRITIONIX_APP_ID, process.env.NUTRITIONIX_APP_KEY);
-        // nutritionix.natural.search('Apple').then(result => {
-        //     console.log(result);
-        // });
-        
         let data = "";
         var postData = JSON.stringify(dbJSON);
         console.log()
@@ -108,8 +103,8 @@ function doNutritionixDBRequest(dbJSON){
             port: 443,
             method: 'POST',
             headers: {
-                'x-app-id': process.env.NUTRITIONIX_APP_ID,
-                'x-app-key': process.env.NUTRITIONIX_APP_KEY,
+                'x-app-id' : process.env.NUTRITIONIX_APP_ID,
+                'x-app-key' : process.env.NUTRITIONIX_APP_KEY,
                 'x-remote-user-id': process.env.NUTRITIONIX_APP_REMOTE_ID
             }
         };
@@ -122,13 +117,16 @@ function doNutritionixDBRequest(dbJSON){
 
             res.on('data', (d)=>{
                 data += d
-                console.log("data?", data)
+                // console.log("data?", data)
             })
 
             res.on('end', ()=>{
                 let jsondata = JSON.parse(data);
-                console.log("jsondata", jsondata)
-
+                // console.log("jsondata", jsondata)
+                resolve({
+                    status: 'success',
+                    result: jsondata
+                })
             })
         })
 
@@ -158,7 +156,18 @@ function jsonToArrayToQuery(json){
             }
             queryJSON = {
                 query: result, 
-                locale: process.env.NUTRITIONIX_LOCALE
+                locale: process.env.NUTRITIONIX_LOCALE,
+                num_servings: 0,
+                line_delimited: false,
+                use_raw_foods: false,
+                include_subrecipe: false,
+                lat: 0,
+                lng: 0,
+                meal_type: 0,
+                use_branded_foods: false,
+                taxonomy: false,
+                ingredient_statement: false,
+                last_modified: false
             }
             resolve({
                 status: 'success',
