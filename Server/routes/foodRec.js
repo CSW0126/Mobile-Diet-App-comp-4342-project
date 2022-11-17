@@ -56,10 +56,9 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
         if (fs.existsSync(imageUrl)) {
             const imageBytes = fs.readFileSync(imageUrl);
             //call food Rec API
-            res.status(200).json({message:"finish"})
-         
+
             const clarifaiRsult  =  await foodRec(imageBytes)
-            console.log("clarifaiRsult is ", clarifaiRsult)
+            // console.log("clarifaiRsult is ", clarifaiRsult)
             
             if(clarifaiRsult.status != 'success'){
                 throw 'clarfai API error'
@@ -72,11 +71,14 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
             }
 
             const respFromNutriDB = await doNutritionixDBRequest(turnResult.result)
-            console.log("what is respFromNutriDB", respFromNutriDB.result)
 
-            // let outputJson = reformatJSON(clarifaiRsult.result, respFromNutriDB.result)
-            
+            let outputJson = await reformatJSON(clarifaiRsult.result, respFromNutriDB.result)
 
+            if(outputJson.status != 'success'){
+                throw 'reformat JSON error'
+            }
+
+            res.status(200).json({ data: outputJson.result})
         } else {
             res.status(500).json({
                 message: 'upload fail'
@@ -89,14 +91,12 @@ router.post('/',upload.single('FoodImage'), async (req, res, next) =>{
 
 
 function doNutritionixDBRequest(dbJSON){
-    console.log("/doNutritionixDBRequest", dbJSON);
-
-
-
     return new Promise((resolve, reject)=>{
         let data = "";
+        dbJSON.query = "1 lettuce 1 abc 1 tomato 1 garlic 1 radish 1 salad 1 cabbage 1 onion 1 happy 1 berry 1 asparagus 1 cherry tomato 1 lemon 1 mushroom 1 carrot 1 eggplant 1 broccoli 1 antipasto 1 sweet 1 romaine ";
         var postData = JSON.stringify(dbJSON);
-        console.log()
+
+
         var options = {
             host: 'trackapi.nutritionix.com',
             path: '/v2/natural/nutrients',
@@ -109,20 +109,16 @@ function doNutritionixDBRequest(dbJSON){
             }
         };
 
-        console.log(options);
-
         var req = https.request(options, (res) =>{
             console.log("statusCode", res.statusCode);
             console.log("headers", res.headers);
 
             res.on('data', (d)=>{
                 data += d
-                // console.log("data?", data)
             })
 
             res.on('end', ()=>{
                 let jsondata = JSON.parse(data);
-                // console.log("jsondata", jsondata)
                 resolve({
                     status: 'success',
                     result: jsondata
@@ -150,9 +146,7 @@ function jsonToArrayToQuery(json){
         var queryJSON = [];
         if(Object.keys(json).length!=0){
             for(var i in json){
-                if(json[i].value >= 0.5){
                     result += "1 " + json[i].name + " ";
-                }
             }
             queryJSON = {
                 query: result, 
@@ -182,6 +176,59 @@ function jsonToArrayToQuery(json){
     }
 
     )
+}
+
+function reformatJSON( clarifaiResult, jsonNutriDBResult){
+    console.log("/reformatJSON")
+    return new Promise((resolve, reject) =>{
+        var outputJson = [];
+        var NutriDBResult = jsonNutriDBResult.foods
+        var count = 0;
+        if(clarifaiResult != null && NutriDBResult != null){
+            for(var i in clarifaiResult){
+                var j = i-count;
+        
+                outputJson[i] = {
+                    "foodName" : clarifaiResult[i].name,
+                    "value" : clarifaiResult[i].value,
+                }
+           
+                if(clarifaiResult[i].name != NutriDBResult[j].food_name){
+                    count ++;    
+                }else{
+                    outputJson[i] = {
+                        "foodName" : clarifaiResult[i].name,
+                        "value" : clarifaiResult[i].value,
+                        "qty" : NutriDBResult[j].serving_qty,
+                        "unit" : NutriDBResult[j].serving_unit,
+                        "calories" : NutriDBResult[j].nf_calories,
+                        "total_fat" : NutriDBResult[j].nf_total_fat,
+                        "saturated_fat": NutriDBResult[j].nf_saturated_fat,
+                        "cholesterol" : NutriDBResult[j].nf_cholesterol,
+                        "sodium" : NutriDBResult[j].nf_sodium,
+                        "total_carbohydrate" : NutriDBResult[j].nf_total_carbohydrate,
+                        "dietary_fiber" : NutriDBResult[j].nf_dietary_fiber,
+                        "sugars" : NutriDBResult[j].nf_sugars,
+                        "protein" : NutriDBResult[j].nf_protein,
+                        "potassium" : NutriDBResult[j].nf_potassium,
+                        "photo" : NutriDBResult[j].photo.thumb
+                    }
+                }
+                console.log("/outputJson", outputJson)
+
+            }          
+            
+            resolve({
+                status: 'success',
+                result: outputJson
+            })
+        }else{
+            reject({
+                status: 'fail',
+                message: 'Empty JSON'
+            })
+        }
+    })
 }
 
 function foodRec(imageBytes, callback =()=>{} ){
