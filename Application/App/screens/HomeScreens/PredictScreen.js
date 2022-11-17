@@ -27,10 +27,10 @@ export default function PredictScreen({ route, navigation }) {
         })();
 
         //for testing 
-        TestGetPredict()
+        // TestGetPredict()
 
         //real
-        //getPredict()
+        getPredict()
     }, [])
 
     const TestGetPredict = async () => {
