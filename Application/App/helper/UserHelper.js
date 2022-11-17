@@ -249,6 +249,14 @@ export const UserHelper = {
             console.log(e)
             //console.log("Update Reference Fail")
         }
+    },
+    GetLastFiveDaysData: ()=>{
+        return [        
+        { x: "19/11", y: 0 },
+        { x: "20/11", y: 0 },
+        { x: "21/11", y: 0 },
+        { x: "22/11", y: 0 },
+        { x: "23/11", y: 3000 }]
     }
 }
 const processBmrWithRate = (bmr) => {
