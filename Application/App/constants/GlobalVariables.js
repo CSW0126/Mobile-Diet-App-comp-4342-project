@@ -11,6 +11,8 @@ global.loginUser= {
     tutPass: 0
 }
 global.TargetEatRecord = ''
+global.selectedSlot = ''
+global.selectedDate = ''
 
 // _id : mongoose.Schema.Types.ObjectId,
 // username : {type: String, require: true, unique: true},

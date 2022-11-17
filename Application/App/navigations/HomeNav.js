@@ -6,6 +6,7 @@ import CameraScreen from '../screens/HomeScreens/CameraScreens'
 import PredictScreen from '../screens/HomeScreens/PredictScreen'
 import FoodInfoScreen from '../screens/HomeScreens/FoodInfoScreen'
 import { COLORS } from '../constants/Index'
+import MealListScreen from '../screens/HomeScreens/MealListScreen'
 
 const StackNav = createStackNavigator()
 
@@ -16,6 +17,7 @@ export default function HomeNavigator({ navigation }) {
             <StackNav.Screen name="CameraScreen" component={CameraScreen} />
             <StackNav.Screen name="PredictScreen" component={PredictScreen} />
             <StackNav.Screen name="FoodInfoScreen" component={FoodInfoScreen} />
+            <StackNav.Screen name="MealListScreen" component={MealListScreen} />
         </StackNav.Navigator>
     )
 }

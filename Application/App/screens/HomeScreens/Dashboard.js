@@ -283,14 +283,14 @@ export default function Home({ navigation }) {
 
     const onListPress = async (slot) => {
         console.log(slot +" onListPress")
-        // GlobalVariables.selectedSlot = slot
-        // GlobalVariables.mealListCase = "Home"
-        // GlobalVariables.selectedDate = selectedDay
-        // let pass = await setMeal(slot)
+        GlobalVariables.selectedSlot = slot
+        GlobalVariables.mealListCase = "Home"
+        GlobalVariables.selectedDate = selectedDay
+        let pass = await setMeal(slot)
 
-        // if (pass) {
-        //     navigation.navigate("MealListScreen")
-        // }
+        if (pass) {
+            navigation.navigate("MealListScreen")
+        }
 
     }
 

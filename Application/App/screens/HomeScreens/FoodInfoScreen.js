@@ -31,20 +31,6 @@ export default function FoodInfoScreen({ route, navigation }) {
 
     }
 
-    const updateUser = async () => {
-        console.log("foodinfo 59")
-        // try {
-        //     let resp = await UserHelper.AsyncEditUser(GlobalVariables.loginUser._id, GlobalVariables.loginUser)
-        //     if (resp.status == 'success') {
-        //         UserHelper.UpdateReference(resp.user)
-        //     } else {
-        //         throw resp.message
-        //     }
-        // } catch (e) {
-        //     console.log(e)
-        // }
-    }
-
     const addSimpleFood = async (foodObject, quantity, enableGoBack) => {
         let eatRecord = GlobalVariables.TargetEatRecord
         console.log(foodObject)
@@ -114,28 +100,6 @@ export default function FoodInfoScreen({ route, navigation }) {
             } catch (e) {
                 console.log(e)
             }
-        }
-    }
-
-    const editSimpleFood = async (foodObject, quantity) => {
-        try {
-            let mealObject = GlobalVariables.mealObject
-            for (let i = 0; i < mealObject.food.length; i++) {
-                //console.log(mealObject.food[i].name + " " + foodObject.foodName)
-                if (mealObject.food[i].name == foodObject.foodName) {
-                    mealObject.food[i].quantity = quantity
-                    break;
-                }
-            }
-            let resp = await UserHelper.AsyncEditUser(GlobalVariables.loginUser._id, GlobalVariables.loginUser)
-            if (resp.status == 'success') {
-                console.log("User Updated")
-                navigation.goBack()
-            } else {
-                throw resp.message
-            }
-        } catch (e) {
-            console.log(e)
         }
     }
 

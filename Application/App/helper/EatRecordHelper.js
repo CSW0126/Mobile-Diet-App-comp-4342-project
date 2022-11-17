@@ -43,8 +43,28 @@ export const EatRecordHelper = {
         }
     },
     getMealSlotCal: (slotMeal) => {
-        console.log("TODO: EatRecordHelper > getMealSlotCal")
-        return 0
+        try {
+            let cal = 0
+
+            if (!slotMeal){
+                return 0
+            }
+
+            if (slotMeal.food.length == 0) {
+                return 0
+            }
+            console.log("hi")
+            //get cal from simple food list
+            for (let i = 0; i < slotMeal.food.length; i++) {
+                cal += slotMeal.food[i].nutrition['calories'] * slotMeal.food[i].quantity
+            }
+
+            console.log(cal)
+
+            return cal
+        } catch (e) {
+            return 0
+        }
     },
     createEatRecordByDateSlot: (date, slot) => {
         try {
@@ -70,6 +90,30 @@ export const EatRecordHelper = {
             }
         } catch (e) {
             return null
+        }
+    },
+    getMealCal: () => {
+        try {
+            let cal = 0
+            let foodList = GlobalVariables.TargetEatRecord.food;
+            // console.log(foodList)
+            if (foodList.length == 0) {
+                return 0
+            }
+
+            //get cal from simple food list
+            for (let i = 0; i < foodList.length; i++) {
+                cal += foodList[i].nutrition['calories'] * foodList[i].quantity
+            }
+
+            //console.log("--------------------EatRecordHelper(getMealCal)----------------")
+            //console.log('Simple food list count ' + simpleFoodList.length)
+            //console.log("Complex Food list count " + complexFoodList.length)
+            //console.log(cal)
+            return cal
+        } catch (e) {
+            console.log(e)
+            return 0
         }
     },
 }
