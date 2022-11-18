@@ -1,4 +1,7 @@
 import { GlobalVariables, Url } from '../constants/Index'
+import moment from 'moment'
+import EatRecordHelper from './EatRecordHelper';
+
 //recommend rate
 const bmrRecomRate = {
     bfRate: 0.2,
@@ -250,13 +253,30 @@ export const UserHelper = {
             //console.log("Update Reference Fail")
         }
     },
-    GetLastFiveDaysData: ()=>{
-        return [        
-        { x: "19/11", y: 0 },
-        { x: "20/11", y: 0 },
-        { x: "21/11", y: 0 },
-        { x: "22/11", y: 0 },
-        { x: "23/11", y: 3000 }]
+    GetLastSevenDaysData: ()=>{
+        try{
+            let return_array = []
+            for (let i = 0; i < 7; i++ ) {
+                let day = moment().subtract(i, 'days').format("YYYY-MM-DD")
+                let x = moment().subtract(i, 'days').format("DD/MM")
+                let temp  = EatRecordHelper.getCalByDays(day)
+                let obj = {x : x, y : temp}
+                return_array.push(obj)
+            }
+            return return_array.reverse()
+
+        }catch(e){
+            return [        
+                { x: "19/11", y: 0 },
+                { x: "20/11", y: 0 },
+                { x: "21/11", y: 0 },
+                { x: "22/11", y: 0 },
+                { x: "23/11", y: 3000 },
+                { x: "24/11", y: 3000 },
+                { x: "25/11", y: 3000 }
+            ]
+            
+        }
     }
 }
 const processBmrWithRate = (bmr) => {

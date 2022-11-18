@@ -11,8 +11,8 @@ export default function Report({navigation}) {
     useEffect(() => {
         const reload = navigation.addListener('focus', () => {
             setTarget(UserHelper.CalBmr())
-            let lastFiveDayData = UserHelper.GetLastFiveDaysData()
-            setData(lastFiveDayData)
+            let lastSevenDayData = UserHelper.GetLastSevenDaysData()
+            setData(lastSevenDayData)
         })
         return reload
     }, [navigation])

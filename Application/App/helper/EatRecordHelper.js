@@ -7,7 +7,7 @@ export const EatRecordHelper = {
         try {
             let eatRecord = GlobalVariables.loginUser.dietRecord
             if (eatRecord.length != 0) {
-                let record = eatRecord.find(object => moment(object.date).format("YYYY-MM-DD") == moment(selectedDay).format("YYYY-MM-DD"))
+                let record = eatRecord.filter(object => moment(object.date).format("YYYY-MM-DD") == moment(selectedDay).format("YYYY-MM-DD"))
                 if (record != undefined) {
                     return record
                 } else {
@@ -115,6 +115,25 @@ export const EatRecordHelper = {
             return 0
         }
     },
+    getCalByDays : (day) =>{
+        try{
+            let records = EatRecordHelper.getEatRecordByDay(day)
+            if (records && records != 0){
+                let cal = 0
+                for (let i = 0; i< records.length; i++){
+                    for(let j = 0; j < records[i].food.length; j++){
+                        cal += records[i].food[j].quantity * records[i].food[j].nutrition.calories
+                    }
+                }
+                return cal
+            }else{
+                return 0
+            }
+        }catch(e){
+            console.log(e)
+            return 0
+        }
+    }
 }
 
 export default EatRecordHelper

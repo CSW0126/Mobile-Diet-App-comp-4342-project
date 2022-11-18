@@ -15,6 +15,7 @@ import { COLORS, GlobalVariables, Images, ImgJson } from '../../constants/Index'
 import UserHelper from '../../helper/UserHelper';
 import EatRecordHelper from '../../helper/EatRecordHelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 LocaleConfig.locales['en'] = {
     monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -136,7 +137,7 @@ export default function Home({ navigation }) {
     const renderBMR = () => {
         try {
             let dayMeal = EatRecordHelper.getEatRecordByDay(GlobalVariables.selectedDate)
-            if (dayMeal != null) {
+            if (dayMeal != null && dayMeal != 0) {
                 let breakfast = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'breakfast')
                 let lunch = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'lunch')
                 let dinner = EatRecordHelper.getRecordByDaySlot(GlobalVariables.selectedDate, 'dinner')
@@ -795,7 +796,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.white,
         // paddingTop: Platform.OS === "ios" ? 20 : 0,
-        // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
     header: {
         flex: 1,
