@@ -26,9 +26,9 @@ export default function FoodInfoScreen({ route, navigation }) {
 
         if (btnType == 'Add') {
             addSimpleFood(foodObject, quantity, true)
+        }else if (btnType == 'Edit'){
+            editSimpleFood(foodObject, quantity)
         }
-
-
     }
 
     const addSimpleFood = async (foodObject, quantity, enableGoBack) => {
@@ -102,6 +102,30 @@ export default function FoodInfoScreen({ route, navigation }) {
             }
         }
     }
+
+    const editSimpleFood = async (foodObject, quantity) => {
+        try {
+            let mealObject = GlobalVariables.TargetEatRecord
+            for (let i = 0; i < mealObject.food.length; i++) {
+                //console.log(mealObject.food[i].name + " " + foodObject.foodName)
+                if (mealObject.food[i].name == foodObject.foodName) {
+                    mealObject.food[i].quantity = quantity
+                    break;
+                }
+            }
+            let resp = await UserHelper.AsyncEditUser(await AsyncStorage.getItem("userToken"), GlobalVariables.loginUser)
+            if (resp.status == 'success') {
+                console.log("User Updated")
+                UserHelper.UpdateReference(resp.user)
+                navigation.goBack()
+            } else {
+                throw resp.message
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
 
     return (
         <SafeAreaView style={styles.container}>

@@ -389,9 +389,9 @@ const FoodInfo = (props) => {
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
-                {showDelete && btnText == 'Edit' ?
+                {/* {btnText == 'Edit' ?
                     renderDeleteBtn()
-                    : renderFlex()}
+                    : renderFlex()} */}
 
             </View>
 

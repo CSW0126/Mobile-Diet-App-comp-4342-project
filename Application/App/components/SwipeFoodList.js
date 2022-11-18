@@ -56,36 +56,21 @@ const SwipeFoodList = (props) => {
     }, [listData])
 
     const handleItemClick = (val) => {
-        //console.log(item)
-        // if (val.food?.length == 0) {
-        //     let item = FoodHelper.ConvertDBFormatToSimpleFoodJSON(val)
-        //     if (item) {
-        //         //console.log(GlobalVariables.mealListCase)
-        //         //console.log(item)
-        //         //navigation.navigate("FoodInfoScreen", { item, btnType: 'Edit' })
-        //         if (GlobalVariables.mealListCase == "FoodInfo") {
-        //             rowRef.current.closeAllOpenRows()
-        //             navigation.push("FoodInfoScreen", { item, btnType: 'Edit' })
-        //         } else {
-        //             rowRef.current.closeAllOpenRows()
-        //             navigation.navigate("FoodInfoScreen", { item, btnType: 'Edit' })
-        //         }
-        //     }
-        // } else {
-        //     rowRef.current.closeAllOpenRows()
-        //     //console.log(val)
-        //     let item = FoodHelper.ConvertMealListComplexFoodObjectToFoodInfoFormat(val)
-        //     if (item) {
-        //         let pass = {
-        //             item,
-        //             btnType: 'Edit',
-        //             complexFoodID: item._id
-        //         }
-        //         //console.log(item)
-        //         navigation.navigate("FoodInfoScreen", pass)
-        //     }
-
-        // }
+        console.log(val)
+        let item = FoodHelper.ConvertDBFormatToSimpleFoodJSON(val)
+        if (item) {
+            //console.log(GlobalVariables.mealListCase)
+            //console.log(item)
+            //navigation.navigate("FoodInfoScreen", { item, btnType: 'Edit' })
+            if (GlobalVariables.mealListCase == "FoodInfo") {
+                rowRef.current.closeAllOpenRows()
+                navigation.push("FoodInfoScreen", { item, btnType: 'Edit' })
+            } else {
+                rowRef.current.closeAllOpenRows()
+                navigation.navigate("FoodInfoScreen", { item, btnType: 'Edit' })
+            }
+        }
+        
     }
 
     const VisibleItem = (props) => {

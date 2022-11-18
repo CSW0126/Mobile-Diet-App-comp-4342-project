@@ -5,12 +5,12 @@ import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis, VictoryLine, Victo
 import UserHelper from '../../helper/UserHelper';
 
 export default function Report({navigation}) {
-    const [target, setTarget] = useState(2000)
+    const [target, setTarget] = useState(UserHelper.CalBmr())
+    const [domain, setDomain] = useState(3000)
     const [data, setData] = useState([])
 
     useEffect(() => {
         const reload = navigation.addListener('focus', () => {
-            setTarget(UserHelper.CalBmr())
             let lastSevenDayData = UserHelper.GetLastSevenDaysData()
             setData(lastSevenDayData)
         })
@@ -30,7 +30,7 @@ export default function Report({navigation}) {
                 </View>
                 <View style={styles.body}>
                     <View>
-                        <Text style={{...FONTS.body2}}>Calories absorb in last 5 days:</Text>
+                        <Text style={{...FONTS.body2}}>Calories absorb in last week:</Text>
                     </View>
                     <View style={{marginLeft:"5%"}}>
                         <VictoryChart
@@ -52,6 +52,7 @@ export default function Report({navigation}) {
                             data={data}
                             />
                             <VictoryLine 
+                                    domain={{y: [0,(domain)]}}
                                     style={
                                         {data : {
                                             stroke:COLORS.akabeni
@@ -60,6 +61,7 @@ export default function Report({navigation}) {
                                     y={() => target }
                                     labels={[`${target} cal`]}
                                     labelComponent={<VictoryLabel 
+                                        
                                         dx={Dimensions.get("window").width *0.3} 
                                         dy={-20}
                                         style={[

@@ -84,7 +84,34 @@ export const FoodHelper = {
         } catch (e) {
             return null
         }
-    }
+    },
+    ConvertDBFormatToSimpleFoodJSON: (simpleDBFood) => {
+        try {
+            let food = {
+                _id: simpleDBFood._id ? simpleDBFood._id : null,
+                foodName: simpleDBFood.name,
+                photo: simpleDBFood.imageUrl,
+                unit: simpleDBFood.unit,
+                qty: simpleDBFood.quantity,
+                calories: simpleDBFood.nutrition.calories,
+                cholesterol: simpleDBFood.nutrition.cholesterol,
+                dietary_fiber: simpleDBFood.nutrition.dietary_fiber,
+                potassium: simpleDBFood.nutrition.potassium,
+                total_fat: simpleDBFood.nutrition.total_fat,
+                protein: simpleDBFood.nutrition.protein,
+                total_carbohydrate: simpleDBFood.nutrition.total_carbohydrate,
+                sugars: simpleDBFood.nutrition.sugars,
+                sodium: simpleDBFood.nutrition.sodium,
+                saturated_fat: simpleDBFood.nutrition.saturated_fat,
+            }
+            if (simpleDBFood.image) {
+                food.image = simpleDBFood.image
+            }
+            return food
+        } catch (e) {
+            return null
+        }
+    },
 }
 
 export default FoodHelper
