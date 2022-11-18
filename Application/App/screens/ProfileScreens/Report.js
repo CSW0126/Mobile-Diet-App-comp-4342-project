@@ -1,4 +1,4 @@
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
 import { COLORS, FONTS, GlobalVariables, ImgJson, SIZES } from '../../constants/Index';
 import React, { useState ,useEffect} from 'react'
 import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis, VictoryLine, VictoryLabel  } from "victory-native";
