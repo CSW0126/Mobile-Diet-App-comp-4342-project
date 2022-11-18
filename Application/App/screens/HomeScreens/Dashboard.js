@@ -366,7 +366,7 @@ export default function Home({ navigation }) {
                 <View style={styles.buttonTop}>
 
                     <TouchableOpacity
-                        style={[styles.dayRow, { flex: 1 }]}
+                        style={[styles.dayRow, { flex: 1, zIndex:1 }]}
                         onPress={handlePrevDayPress}
                     >
                         <LinearGradient
@@ -378,7 +378,7 @@ export default function Home({ navigation }) {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.dayRow, { flex: 2 }]}
+                        style={[styles.dayRow, { flex: 2, zIndex:1 }]}
                         onPress={calButtonPress}
                     >
                         <LinearGradient
@@ -389,7 +389,7 @@ export default function Home({ navigation }) {
                         </LinearGradient>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.dayRow, { flex: 1 }]}
+                        style={[styles.dayRow, { flex: 1,zIndex:1 }]}
                         onPress={handleNextDayPress}
                     >
                         <LinearGradient

@@ -72,7 +72,9 @@ export default function Report({navigation}) {
                             />
                         </VictoryChart>
                     </View>
-
+                    <View>
+                        
+                    </View>
                 </View>
             </View>
     </ScrollView>
