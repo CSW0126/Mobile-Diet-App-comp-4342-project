@@ -187,7 +187,7 @@ router.post('/verify',AuthToken, (req,res)=>{
 })
 
 /* edit
-URL:localhost:3000/user/login
+URL:localhost:3000/user/edit
 Method: POST
 body:
 {
