@@ -49,10 +49,18 @@ export default function GetAge({ navigation }) {
     }
 
     const handleNext = () => {
-
-        GlobalVariables.loginUser.age = age.age
-        console.log("Age: " + GlobalVariables.loginUser.age)
-        navigation.navigate("GetPurpose");
+        console.log(age.isValidNumber)
+        if (age.isValidNumber && age.age >0 && age.age <= 150){
+            GlobalVariables.loginUser.age = age.age
+            console.log("Age: " + GlobalVariables.loginUser.age)
+            navigation.navigate("GetPurpose");
+        }else{
+            setAge({
+                ...age,
+                isValidNumber: false,
+                msg: "Please fill in the age (1-150)"
+            })
+        }
     }
     return (
         <ScrollView keyboardDismissMode='interactive'   contentContainerStyle={{
