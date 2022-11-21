@@ -148,7 +148,6 @@ router.post('/verify',AuthToken, (req,res)=>{
         User.findOne({username:username, _id: _id})
         .exec()
         .then(user =>{
-            console.log(user.length)
             if(user.length < 1){
                 return res.status(401).json({
                     status: "fail",
