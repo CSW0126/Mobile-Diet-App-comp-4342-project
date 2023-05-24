@@ -1,4 +1,4 @@
-# comp-4342-project
+# comp-4342-project (Diet-App - React Native)
 
 <img src="https://img.shields.io/badge/React%20Native-%20-green">&nbsp;
 <img src="https://img.shields.io/badge/MongoDB-%20-green">&nbsp;
