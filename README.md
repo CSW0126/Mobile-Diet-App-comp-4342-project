@@ -10,7 +10,7 @@ This application revolutionizes the way we interact with food and nutrition data
 <hr/>
 
 ## View the documentation:
-[Documentation Link](https://github.com/CSW0126/comp-4342-project/blob/main/Report/COMP4342%20Report.pdf)
+[Documentation Link](Report/COMP4342%20Report.pdf)
 
 <hr/>
 
