@@ -15,10 +15,10 @@ This application revolutionizes the way we interact with food and nutrition data
 <hr/>
 
 ## Some Screenshots
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/main.jpg'>
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/s1.jpg'>
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/dashboard.jpg'>
+<img src='Img/main.jpg' width='300px' height="600px">
+<img src='Img/s1.jpg' width='300px' height="600px">
+<img src='Img/dashboard.jpg' width='300px' height="600px">
 <br/>
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/info.jpg'>
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/banana.jpg'>
-<img src='https://github.com/CSW0126/comp-4342-project/tree/main/Img/broccoli.jpg'>
+<img src='Img/info.jpg' width='300px' height="600px">
+<img src='Img/banana.jpg' width='300px' height="600px">
+<img src='Img/broccoli.jpg' width='300px' height="600px">
